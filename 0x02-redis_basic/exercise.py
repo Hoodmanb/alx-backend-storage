@@ -32,10 +32,10 @@ class Cache:
 
             return data
 
-    def get_str(self, key: str) -> str:
+    def get_str(self, key: str) -> Optional[str]:
         """Initialize the Redis connection and"""
         return self.get(key, lambda x: x.decode('utf-8'))
 
-    def get_int(self, key: str) -> int:
+    def get_int(self, key: str) -> Optional[int]:
         """Retrieve data as an integer."""
         return self.get(key, int)
