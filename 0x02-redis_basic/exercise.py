@@ -3,6 +3,17 @@
 import redis
 import uuid
 from typing import Union, Optional, Callable
+from functools import wraps
+
+
+def count_calls(method: Callable) -> Callable:
+    """Initialize the Redis connection and """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = method.__qualname__
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
@@ -13,6 +24,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Initialize the Redis connection and """
         rand = str(uuid.uuid4())
@@ -30,7 +42,7 @@ class Cache:
         if fn is not None:
             return fn(data)
 
-            return data
+        return data
 
     def get_str(self, key: str) -> Optional[str]:
         """Initialize the Redis connection and"""
