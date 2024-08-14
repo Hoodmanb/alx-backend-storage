@@ -22,7 +22,7 @@ class Cache:
     def get(self, key: str, fn: Optional[Callable[[bytes],
             Union[str, int, float, bytes]]] = None
             ) -> Union[str, int, float, bytes, None]:
-        """"""
+        """Initialize the Redis connection and"""
         data = self._redis.get(key)
         if data is None:
             return None
@@ -33,7 +33,7 @@ class Cache:
             return data
 
     def get_str(self, key: str) -> str:
-        """"""
+        """Initialize the Redis connection and"""
         return self.get(key, lambda x: x.decode('utf-8'))
 
     def get_int(self, key: str) -> int:
