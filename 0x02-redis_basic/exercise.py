@@ -16,6 +16,20 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """Initialize the Redis connection and """
+    @wraps(method)
+    def history(self, *args):
+        """Initialize the Redis connection and """
+        inputKey = method.__qualname__ + ":inputs"
+        outputKey = method.__qualname__ + ":outputs"
+        self._redis.rpush(inputKey, str(args))
+        result = method(self, *args,)
+        self._redis.rpush(outputKey, str(result))
+        return result
+    return history
+
+
 class Cache:
     """Initialize the Redis connection and """
 
@@ -25,6 +39,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Initialize the Redis connection and """
         rand = str(uuid.uuid4())
